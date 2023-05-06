@@ -1,8 +1,6 @@
 package com.api.microservicio.dao;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +9,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.api.microservicio.model.Busqueda;
-import com.api.microservicio.model.Cita;
-import com.api.microservicio.model.Cliente;
-import com.api.microservicio.model.Especialidad;
-import com.api.microservicio.model.Medico;
+import com.api.microservicio.model.Paginacion;
+import com.api.microservicio.model.Usuario;
 
 @Repository
 @Transactional
@@ -29,105 +24,58 @@ public class MicroservicioDao{
     public void setTemplate(JdbcTemplate template) {    
         this.template = template;    
     }
-
-    /* CLIENTE */
-
-    public List<Cliente> obtenerCliente(String id){
-        String sql="select * from cliente where idCliente="+id;      
-        return template.query(sql, new BeanPropertyRowMapper<Cliente>(Cliente.class));       
-    }    
-
-    public List<Cliente> obtenerClientes(){
-        String sql="select * from cliente";      
-        return template.query(sql, new BeanPropertyRowMapper<Cliente>(Cliente.class));       
-    }   
     
-    public int crearCliente(Cliente cliente){
-        try{
-            Object[] clienteObj = new Object[] { cliente.getNombres(), cliente.getApellidos(),
-                cliente.getCorreo(), cliente.getCurp() };
-            String sql="insert into cliente (nombres,apellidos,correo,curp) values (?,?,?,?)";      
-            return template.update(sql,clienteObj);
+    public int crearUsuario(Usuario usuario){
+    	try{
+            Object[] usuarioObj = new Object[] { usuario.getNombre(),
+                usuario.getApellido(), usuario.getCorreoElectronico(), usuario.getFechaNacimiento() };
+            String sql="insert into usuario (nombre,apellido,correoElectronico,fechaNacimiento) values (?,?,?,?)";      
+            return template.update(sql,usuarioObj);
         }catch(Exception e){
             logger.info("ERROR: "+e.toString());
             return 0;
         }
-    }   
+    }  
+    
+    public List<Usuario> obtenerUsuario(String idUsuario){
+        String sql="select * from usuario where id="+idUsuario;      
+        return template.query(sql, new BeanPropertyRowMapper<Usuario>(Usuario.class));       
+    }    
 
-    public int actualizarCliente(Cliente cliente){
+    public List<Usuario> obtenerUsuarios(){
+        String sql="select * from usuario";      
+        return template.query(sql, new BeanPropertyRowMapper<Usuario>(Usuario.class));       
+    }  
+    
+    public List<Usuario> obtenerUsuariosPaginacion(Paginacion paginacion){
+    	if(paginacion.getPagina()<1) {
+    		paginacion.setPagina(1);
+    	}
+    	int elementos = (paginacion.getPagina()-1)*paginacion.getNumeroElementos();
+        String sql="select * from usuario order by id limit "+elementos+" offset "+(elementos+paginacion.getNumeroElementos()-1);      
+        return template.query(sql, new BeanPropertyRowMapper<Usuario>(Usuario.class));
+    }  
+    
+
+    public int actualizarUsuario(Usuario usuario){
         try{
-            Object[] clienteObj = new Object[] { cliente.getNombres(), cliente.getApellidos(),
-                cliente.getCorreo(), cliente.getCurp(), cliente.getIdCliente()};
-            String sql="update cliente set nombres = ?,  apellidos = ?, correo = ?, curp = ? where idCliente = ?";      
-            return template.update(sql,clienteObj);
+            Object[] usuarioObj = new Object[] { usuario.getNombre(),
+                    usuario.getApellido(), usuario.getCorreoElectronico(), usuario.getFechaNacimiento(), usuario.getId()};
+            String sql="update usuario set nombre = ?,  apellido = ?, correoElectronico = ?, fechaNacimiento = ? where id = ?";      
+            return template.update(sql,usuarioObj);
         }catch(Exception e){
 
             return 0;
         }
-    }   
-
-
-    /* CITA */
-
-    public List<Cita> obtenerCitas(){
-        String sql="select * from cita";      
-        return template.query(sql, new BeanPropertyRowMapper<Cita>(Cita.class));       
-    }   
-
-    public List<Cita> obtenerCitas(Busqueda busqueda){
-        String sql = "";
-        if(busqueda.getFechaHoraCita()!=null){
-            sql="select * from cita where fechaHoraCita>"+busqueda.getFechaHoraCita();
-        }else{
-            sql="select * from cita as ca inner join cliente as ce on ca.idCliente = ce.idCliente where ce.curp = '"+busqueda.getCurp()+"'";
-        }
-        return template.query(sql, new BeanPropertyRowMapper<Cita>(Cita.class));        
-    } 
-
-    public int crearCita(Cita cita){
+    }
+    
+    public int eliminarUsuario(String idUsuario){
         try{
-            Object[] citaObj = new Object[] { cita.getIdCliente(), cita.getIdEspecialidad(),
-                cita.getFechaHoraCita(), cita.getActiva(), cita.getMotivo() };
-            String sql="insert into cita (idCliente,idEspecialidad,fechaHoraCita,activa,motivo) values (?,?,?,?,?)";      
-            return template.update(sql,citaObj);
+            Object[] usuarioObj = new Object[] { idUsuario };
+            String sql="delete from usuario where id=?";      
+            return template.update(sql,usuarioObj);
         }catch(Exception e){
             return 0;
         }
     }
-
-    public int actualizarCita(Cita cita){
-        try{
-            Object[] citaObj = new Object[] { cita.getIdCliente(), cita.getIdEspecialidad(),
-                cita.getFechaHoraCita(), cita.getActiva(), cita.getMotivo(), cita.getIdCita() };
-            String sql="update cita set idCliente=?,idEspecialidad=?,fechaHoraCita=?,activa=?,motivo=? where idCita=?";      
-            return template.update(sql,citaObj);
-        }catch(Exception e){
-            return 0;
-        }
-    }
-
-    public int eliminarCita(Cita cita){
-        try{
-            Object[] citaObj = new Object[] { cita.getIdCita() };
-            String sql="delete from cita where idCita=?";      
-            return template.update(sql,citaObj);
-        }catch(Exception e){
-            return 0;
-        }
-    }
-
-    /* ESPECIALIDAD */
-
-    public List<Especialidad> obtenerEspecialidades(){
-        String sql="select * from especialidad";      
-        return template.query(sql, new BeanPropertyRowMapper<Especialidad>(Especialidad.class));       
-    }
-
-    /* MEDICO */
-
-    public List<Medico> obtenerMedicos(){
-        String sql="select * from medico";      
-        return template.query(sql, new BeanPropertyRowMapper<Medico>(Medico.class));       
-    }
-
 }
