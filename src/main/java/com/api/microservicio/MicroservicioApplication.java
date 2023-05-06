@@ -16,6 +16,8 @@ public class MicroservicioApplication implements CommandLineRunner {
 		SpringApplication.run(MicroservicioApplication.class, args);
 	}
 	
+	// Creación de tabla
+	
 	@Override
 	public void run(String... args) throws Exception {
 		jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS usuario("

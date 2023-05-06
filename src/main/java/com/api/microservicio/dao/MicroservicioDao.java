@@ -25,6 +25,7 @@ public class MicroservicioDao{
         this.template = template;    
     }
     
+    // Método para  crear un usuario en BD
     public int crearUsuario(Usuario usuario){
     	try{
             Object[] usuarioObj = new Object[] { usuario.getNombre(),
@@ -37,16 +38,19 @@ public class MicroservicioDao{
         }
     }  
     
+    // Método para obtener un usuario en BD
     public List<Usuario> obtenerUsuario(String idUsuario){
         String sql="select * from usuario where id="+idUsuario;      
         return template.query(sql, new BeanPropertyRowMapper<Usuario>(Usuario.class));       
     }    
 
+    // Método para obtener usuarios en BD
     public List<Usuario> obtenerUsuarios(){
         String sql="select * from usuario";      
         return template.query(sql, new BeanPropertyRowMapper<Usuario>(Usuario.class));       
     }  
     
+    // Método para usuarios en BD
     public List<Usuario> obtenerUsuariosPaginacion(Paginacion paginacion){
     	if(paginacion.getPagina()<1) {
     		paginacion.setPagina(1);
@@ -56,7 +60,8 @@ public class MicroservicioDao{
         return template.query(sql, new BeanPropertyRowMapper<Usuario>(Usuario.class));
     }  
     
-
+    
+    // Método para actualizar un usuario en BD
     public int actualizarUsuario(Usuario usuario){
         try{
             Object[] usuarioObj = new Object[] { usuario.getNombre(),
@@ -69,6 +74,7 @@ public class MicroservicioDao{
         }
     }
     
+    // Método para eliminar un usuario en BD
     public int eliminarUsuario(String idUsuario){
         try{
             Object[] usuarioObj = new Object[] { idUsuario };

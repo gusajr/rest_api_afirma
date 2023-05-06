@@ -16,6 +16,7 @@ public class MockitoTest {
 	@Mock
     MicroservicioDao microservicioDao;
 	
+	// Test con Mockito
 	@Test
 	public void mockitoTest() {
 		MicroservicioDao microservicioDao = Mockito.mock(MicroservicioDao.class);

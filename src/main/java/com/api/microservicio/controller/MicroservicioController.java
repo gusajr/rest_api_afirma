@@ -25,6 +25,7 @@ public class MicroservicioController {
 	@Autowired
 	MicroservicioDao dao;
 
+	// Recurso para estatus
 	@GetMapping("/")
 	public ResponseEntity<Object> obtenerEstatus(){
 		Map<String,String> ok = new HashMap<String,String>();
@@ -34,6 +35,7 @@ public class MicroservicioController {
 	}
 	
 	
+	// Recurso para crear usuario
 	@PostMapping("/usuario")
 	public ResponseEntity<Object> crearUsuario(@RequestBody Usuario usuario){
 		Respuesta respuesta = new Respuesta();
@@ -48,21 +50,25 @@ public class MicroservicioController {
 		}
 	}
 	
+	// Recurso para obtener usuarios
 	@GetMapping("/usuarios")
 	public ResponseEntity<Object> obtenerUsuarios(){
 		return new ResponseEntity<Object>(dao.obtenerUsuarios(), HttpStatus.OK);
 	}
 	
+	// Recurso para obtener usuarios
 	@PostMapping("/usuariosPaginacion")
 	public ResponseEntity<Object> obtenerUsuarios(Paginacion paginacion){
 		return new ResponseEntity<Object>(dao.obtenerUsuariosPaginacion(paginacion), HttpStatus.OK);
 	}
-	
+
+	// Recurso para obtener usuario por id
 	@GetMapping("/usuario/{idUsuario}")
 	public String obtenerUsuario(@PathVariable (required = true) String idUsuario){
 		return dao.obtenerUsuario(idUsuario).toString();
 	}
 	
+	// Recurso para actualizar un usuario
 	@PutMapping("/usuario/{idUsuario}")
 	public ResponseEntity<Object> actualizarUsuario(@RequestBody Usuario usuario){
 		Respuesta respuesta = new Respuesta();
@@ -77,6 +83,7 @@ public class MicroservicioController {
 		}
 	}
 	
+	// Recurso para eliminar un usuario
 	@DeleteMapping("/usuario/{idUsuario}")
 	public ResponseEntity<Object> eliminarUsuario(@PathVariable (required = true) String idUsuario){
 		Respuesta respuesta = new Respuesta();

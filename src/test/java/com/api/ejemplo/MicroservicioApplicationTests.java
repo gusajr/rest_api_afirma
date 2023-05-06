@@ -19,6 +19,7 @@ class MicroservicioApplicationTests {
 	@Autowired
 	MicroservicioController microservicioController;
 	
+	// Antes del test
 	@BeforeEach
 	public void crearUsuario() {
 		Usuario usuario = new Usuario();
@@ -30,6 +31,7 @@ class MicroservicioApplicationTests {
 		microservicioController.crearUsuario(usuario);
 	}
 
+	// Tests
 	@Test
 	public void tests() {
 		Usuario usuario = new Usuario();
